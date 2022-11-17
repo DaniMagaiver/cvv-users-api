@@ -4,9 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "env-cmd -f ./.env.dev nodemon --watch src/** --exec ts-node src/index.ts",
+    "dev": "env-cmd -f ./.env.dev nodemon src/index.ts",
     "build dev": "env-cmd -f ./.env.dev tsc",
-    "start": "env-cmd -f ./.env.dev nodemon node dist/index.js"
+    "start": "env-cmd -f ./.env.dev node dist/index.js"
   },
   "devDependencies": {
     "@types/express": "^4.17.14",
