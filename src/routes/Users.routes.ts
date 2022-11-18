@@ -4,8 +4,10 @@ const usersRoute = Router();
 
 usersRoute
   .get("/", UsersController.getAll.bind(UsersController))
+  .get("/aprovacoes", UsersController.getApprovalList.bind(UsersController))
   .post("/", UsersController.create.bind(UsersController))
   .put("/:id", UsersController.update.bind(UsersController))
+  .patch("/:id/aprovar", UsersController.approve.bind(UsersController))
   .patch(
     "/:id/alterarStatus",
     UsersController.updateStatus.bind(UsersController)

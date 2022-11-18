@@ -6,6 +6,5 @@ export default new DataSource({
   database: process.env.TYPEORM_DATABASE,
   migrations: ["./migrations/*.{js,ts}"],
   entities: ["src/models/*.{js,ts}"],
-  logging: true,
-  loggerLevel: "debug"
+  logging: "all",
 });

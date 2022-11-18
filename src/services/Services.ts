@@ -2,6 +2,7 @@ import { isMongoId } from "class-validator";
 import database from "../database";
 import { MongoRepository } from "typeorm";
 import { isUuid } from "uuidv4";
+import { MongoFindManyOptions } from "typeorm/find-options/mongodb/MongoFindManyOptions";
 
 export default abstract class Services<T> {
   private repository: MongoRepository<T>;
@@ -40,5 +41,9 @@ export default abstract class Services<T> {
   update(id: string, data: any) {
     this.isValidId(id);
     return this.repository.update(id, data);
+  }
+
+  query(query: MongoFindManyOptions<T>) {
+    return this.repository.find(query);
   }
 }

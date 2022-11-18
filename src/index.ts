@@ -7,6 +7,7 @@ import routes from "./routes";
 const app = express();
 const door = process.env.EXPRESS_DOOR;
 
+app.disable('etag');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

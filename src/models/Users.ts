@@ -1,5 +1,6 @@
-import { Column, Entity, ObjectIdColumn } from "typeorm";
+import { Column, Entity, ObjectIdColumn, PrimaryColumn } from "typeorm";
 import {
+  IsBoolean,
   IsDateString,
   IsEmail,
   IsIn,
@@ -7,19 +8,19 @@ import {
   IsPhoneNumber,
   MaxLength,
 } from "class-validator";
+import { ObjectID } from "bson";
 
 @Entity()
 export class Users {
   @ObjectIdColumn({ name: "_id" })
-  id: string;
+  _id: ObjectID;
 
   @Column()
   @IsNotEmpty({ message: "Nome é um campo obrigatório." })
   name: string;
 
   @Column()
-  @IsDateString({}, { message: "A data deve ser no formato YYYY-MM-DD" })
-  @IsNotEmpty({ message: "Nome é um campo obrigatório." })
+  @IsNotEmpty({ message: "Data é um campo obrigatório." })
   birthDay: string;
 
   @Column()
@@ -56,6 +57,10 @@ export class Users {
   })
   @IsNotEmpty({ message: "Tipo é um campo obrigatório" })
   type: "volunteer" | "admin";
+
+  @Column()
+  @IsBoolean({ message: "O campo é do tipo boolean" })
+  isApproved: boolean;
 
   constructor(data: any) {
     Object.assign(this, data);

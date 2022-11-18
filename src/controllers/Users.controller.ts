@@ -20,14 +20,14 @@ export class UsersController {
       const usersService = new UsersService();
       const { index, limit } = request.query;
       let users = null;
-      if (index !== null) {
-        const [content, size] = await usersService.listAllPaginated(
+      if (index) {
+        const [content, size] = await usersService.listAllUsersPaginated(
           Number(index),
           Number(limit)
         );
         users = { content, size, index: Number(index) };
       } else {
-        users = await usersService.listAll();
+        users = await usersService.listAllUsers();
       }
       return response.status(200).json(users);
     } catch (error) {
@@ -39,6 +39,9 @@ export class UsersController {
     try {
       const userService = new UsersService();
       const user: Users = new Users(request?.body);
+      user.status = "inactive";
+      user.type = "volunteer";
+      user.isApproved = false;
       await this.verify(
         validate(user, {
           enableDebugMessages: true,
@@ -47,8 +50,9 @@ export class UsersController {
       );
       const newUser = await userService.create(user);
       return response.status(200).json(newUser);
-    } catch ({ message }) {
-      return response.status(400).json({ message });
+    } catch (error) {
+      console.log(error);
+      return response.status(400).json({ message: error.message });
     }
   }
 
@@ -85,7 +89,6 @@ export class UsersController {
     try {
       const { id } = request.params;
       const { status } = request.query;
-
       const userService = new UsersService();
       const user: Users = await userService.findOne(id);
       user.status = status as "inactive" | "active";
@@ -100,13 +103,13 @@ export class UsersController {
           stopAtFirstError: true,
         })
       );
-
       await userService.update(id, user);
 
       return response
         .status(200)
         .json({ message: "Status de usuário alterado com sucesso!" });
     } catch ({ message }) {
+      console.error(message);
       return response.status(400).json({ message });
     }
   }
@@ -136,6 +139,34 @@ export class UsersController {
         .json({ message: "Tipo de usuário alterado com sucesso!" });
     } catch ({ message }) {
       return response.status(400).json({ message });
+    }
+  }
+
+  static async getApprovalList(request: Request, response: Response) {
+    try {
+      const userService = new UsersService();
+      const users = await userService.findApprovalList();
+      return response.status(200).json(users);
+    } catch (error) {
+      return response.status(400).json({ message: error.message });
+    }
+  }
+
+  static async approve(request: Request, response: Response) {
+    try {
+      const userService = new UsersService();
+      const id = request.params.id;
+      const user = await userService.findOne(id);
+      if (!user) throw new Error("Usuário não encontrado");
+      user.isApproved = true;
+      console.log(user);
+      await userService.update(id, user);
+      return response
+        .status(200)
+        .json({ message: "Usuário aprovado com sucesso!" });
+    } catch (error) {
+      console.error(error.message);
+      return response.status(400).json({ message: error.message });
     }
   }
 }
